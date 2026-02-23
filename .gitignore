@@ -1,0 +1,23 @@
+# Environment
+.env
+
+# Node
+node_modules/
+dist/
+
+# Prisma
+event-api/prisma/*.db
+
+# Certificates (sensitive)
+caddy/certs/*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docker volumes (local)
+pg_data/

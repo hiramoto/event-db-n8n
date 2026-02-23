@@ -273,7 +273,7 @@ event-pipeline/
 │   ├── prisma/
 │   │   └── schema.prisma
 │   └── src/
-│       └── index.ts            # Hono / Fastify
+│       └── index.ts            # Hono
 ├── db/
 │   └── init.sh                 # DB 作成のみ（テーブルは Prisma で管理）
 ├── scripts/
@@ -499,8 +499,8 @@ n8n (内部) → HTTP Request → OpenClaw /hooks/agent (exe.dev)
 
 ### Phase 1: Location イベント（MVP）
 
-- [ ] Event API 実装（POST /events, GET /events, Bearer Token 認証, 冪等性）
-- [ ] Prisma schema 定義 → `prisma migrate deploy` でテーブル作成
+- [x] Event API 実装（POST /events, GET /events, Bearer Token 認証, 冪等性）— Hono で実装
+- [x] Prisma schema 定義 → `prisma migrate deploy` でテーブル作成
 - [ ] places テーブルに自宅・職場などの初期データ投入
 - [ ] Tasker + AutoLocation でジオフェンス設定、テスト送信
 - [ ] Cloudflare WAF: Rate Limiting + POST only ルール設定
@@ -526,7 +526,7 @@ n8n (内部) → HTTP Request → OpenClaw /hooks/agent (exe.dev)
 | 項目 | 選択肢 / メモ |
 |------|--------------|
 | VPS プラン | 2GB / 4GB — n8n + Postgres の常駐を考慮して決定 |
-| Event API の FW | Hono / Fastify（TypeScript） |
+| ~~Event API の FW~~ | ~~Hono / Fastify~~ → **Hono** に決定 |
 | 監視 / アラート | Uptime Kuma / Healthchecks.io 等 |
 | バックアップ先 | pg_dump → さくらオブジェクトストレージ or S3 互換 |
 | OpenClaw skill の詳細設計 | digest の解釈ルール、応答テンプレート |

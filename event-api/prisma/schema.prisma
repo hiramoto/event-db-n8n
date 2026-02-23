@@ -1,0 +1,49 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Place {
+  placeId   String   @id @map("place_id")
+  label     String
+  lat       Float?
+  lng       Float?
+  radiusM   Int      @default(100) @map("radius_m")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("places")
+}
+
+model Event {
+  id          BigInt    @id @default(autoincrement())
+  eventId     String    @unique @map("event_id") // UUID, 冪等キー
+  type        String
+  ts          DateTime
+  payload     Json
+  deviceId    String?   @map("device_id")
+  meta        Json      @default("{}")
+  processedAt DateTime? @map("processed_at") // NULL = 未処理
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([type, ts])
+  @@index([processedAt])
+  @@map("events")
+}
+
+model Digest {
+  id          BigInt    @id @default(autoincrement())
+  periodStart DateTime  @map("period_start")
+  periodEnd   DateTime  @map("period_end")
+  type        String
+  summary     Json
+  sentAt      DateTime? @map("sent_at") // NULL = 未送信
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([sentAt])
+  @@map("digests")
+}

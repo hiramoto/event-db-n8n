@@ -1,0 +1,14 @@
+{
+    email you@example.com
+    auto_https off
+}
+
+{$API_SUBDOMAIN}.{$DOMAIN} {
+    tls /etc/caddy/certs/origin.pem /etc/caddy/certs/origin-key.pem {
+        client_auth {
+            mode require_and_verify
+            trusted_ca_cert_file /etc/caddy/certs/origin-pull-ca.pem
+        }
+    }
+    reverse_proxy event-api:3000
+}

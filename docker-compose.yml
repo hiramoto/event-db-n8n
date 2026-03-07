@@ -30,10 +30,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: >
-      psql -h postgres -U ${POSTGRES_USER} -tc
-      "SELECT 1 FROM pg_database WHERE datname='n8ndb'"
-      | grep -q 1 || psql -h postgres -U ${POSTGRES_USER} -c "CREATE DATABASE n8ndb;"
+    command:
+      - sh
+      - -c
+      - |
+        psql -h postgres -U "${POSTGRES_USER}" -tc "SELECT 1 FROM pg_database WHERE datname='eventdb'" | grep -q 1 || psql -h postgres -U "${POSTGRES_USER}" -c "CREATE DATABASE eventdb;"
+        psql -h postgres -U "${POSTGRES_USER}" -tc "SELECT 1 FROM pg_database WHERE datname='n8ndb'" | grep -q 1 || psql -h postgres -U "${POSTGRES_USER}" -c "CREATE DATABASE n8ndb;"
 
   n8n:
     image: n8nio/n8n:latest

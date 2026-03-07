@@ -22,6 +22,19 @@ services:
     expose:
       - "3000"
 
+  db-init:
+    image: postgres:16-alpine
+    restart: no
+    environment:
+      - PGPASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      psql -h postgres -U ${POSTGRES_USER} -tc
+      "SELECT 1 FROM pg_database WHERE datname='n8ndb'"
+      | grep -q 1 || psql -h postgres -U ${POSTGRES_USER} -c "CREATE DATABASE n8ndb;"
+
   n8n:
     image: n8nio/n8n:latest
     restart: unless-stopped
@@ -38,7 +51,8 @@ services:
     volumes:
       - n8n_data:/home/node/.n8n
     depends_on:
-      - postgres
+      db-init:
+        condition: service_completed_successfully
     expose:
       - "5678"
     # ports は公開しない — SSH トンネルでアクセス
@@ -54,6 +68,11 @@ services:
       - ./db/init.sh:/docker-entrypoint-initdb.d/init.sh
     expose:
       - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   caddy_data:
